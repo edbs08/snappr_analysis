@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload and Processing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .upload-form {
+            margin-bottom: 20px;
+        }
+        .image-grid {
+            display: flex;
+            gap: 10px;
+        }
+        .image-grid img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload and Process Image</h1>
+        <form class="upload-form" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".png" required>
+            <button type="submit">Upload and Process</button>
+            <div class="model-selection">
+                <label>
+                    <input type="radio" name="model" value="model1" checked> Model 1
+                </label>
+                <label>
+                    <input type="radio" name="model" value="model2"> Model 2
+                </label>
+            </div>
+        </form>
+
+        <h2>Processed Images</h2>
+        <div class="image-grid">
+            {% if processed_images %}
+                {% for image in processed_images %}
+                    <img src="{{ url_for('static', filename=image) }}" alt="Processed Image">
+                {% endfor %}
+            {% else %}
+                <p>No processed images yet. Upload an image to see the results.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

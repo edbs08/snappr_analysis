@@ -1,0 +1,45 @@
+
+# Training parameters 1 full size :
+
+accelerate launch \
+    --num_processes=1 \
+    OmniGen/train.py \
+    --model_name_or_path Shitao/OmniGen-v1 \
+    --batch_size_per_device 2 \
+    --condition_dropout_prob 0.01 \
+    --lr 3e-4 \
+    --use_lora \
+    --lora_rank 8 \
+    --json_file ../omniGen_training.jsonl \
+    --image_path ./data/images/media \
+    --max_input_length_limit 18000 \
+    --keep_raw_resolution \
+    --max_image_size 1024 \
+    --gradient_accumulation_steps 1 \
+    --ckpt_every 100 \
+    --epochs 100 \
+    --log_every 1 \
+    --results_dir ./results/snappr_finetunning_1
+
+
+# Training parameters 2, 256 resolution:
+
+accelerate launch \
+    --num_processes=1 \
+    OmniGen/train.py \
+    --model_name_or_path Shitao/OmniGen-v1 \
+    --batch_size_per_device 2 \
+    --condition_dropout_prob 0.01 \
+    --lr 3e-4 \
+    --use_lora \
+    --lora_rank 8 \
+    --json_file omniGen_training.jsonl \
+    --image_path ./data/images/media2 \
+    --max_input_length_limit 18000 \
+    --keep_raw_resolution \
+    --max_image_size 256 \
+    --gradient_accumulation_steps 1 \
+    --ckpt_every 50 \
+    --epochs 100 \
+    --log_every 1 \
+    --results_dir ./results/snappr_finetunning_2

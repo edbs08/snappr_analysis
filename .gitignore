@@ -180,3 +180,9 @@ results/
 
 # credentials 
 *.pem
+
+# Omnigen repo
+scripts/OmniGen/
+
+# flask app
+web_app/static/*

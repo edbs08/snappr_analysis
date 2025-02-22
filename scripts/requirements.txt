@@ -1,4 +1,4 @@
 requests
-transformers
 pillow
 openai
+flask
