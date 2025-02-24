@@ -6,18 +6,18 @@ class LLMConnection:
     def __init__(self, openai=True,model=None):
         API_KEY ="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"        
         self.openai_key = API_KEY
+        self.client = OpenAI(api_key=self.openai_key)
     
     def encode_image(self,image_path):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode("utf-8")
     
     def create_instruction_per_image(self,image):
-        client = OpenAI(api_key=self.openai_key)
         # Getting the Base64 string
         base64_image_1 = self.encode_image(image)
 
-        # Two step call to llm 
-        response = client.chat.completions.create(
+        # VLM call
+        response = self.client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {
@@ -33,6 +33,31 @@ class LLMConnection:
                         {
                             "type": "image_url",
                             "image_url": {"url": f"data:image/jpeg;base64,{base64_image_1}"},
+                        },
+                    ],
+                }
+            ],
+        )
+        return response.choices[0].message.content
+    
+    def general_vlm_call(self, prompt, image):
+        # Getting the Base64 string
+        base64_image = self.encode_image(image)
+
+        # VLM call
+        response = self.client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": prompt,
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
                         },
                     ],
                 }

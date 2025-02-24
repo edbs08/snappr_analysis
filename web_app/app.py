@@ -40,15 +40,25 @@ def index():
         
         # If the file is valid
         if file and allowed_file(file.filename):
-            # Save the uploaded file
-            #********** missing preprocess for inference
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(filepath)
+            # clear previous pictures 
+            clear_all_in_folder()
+            file_extension=file.filename.split(".")[1]
 
-            # Get the selected model
-            selected_model = request.form.get('model')  # Get the selected model from the radio buttons
-            print(selected_model)
-            generate_multiple(selected_model)
+            # Save the uploaded file
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], "test_image."+file_extension)
+            file.save(filepath)            
+
+            # Get the text inputs from the form
+            model = request.form.get('model')
+            checkpoint = request.form.get('checkpoint')
+            instruction = request.form.get('instruction')
+            resolution = int(request.form.get('resolution'))
+
+            #modify the extension and resolution 
+            resize_and_save_image(filepath,(resolution,resolution))
+
+            print(model,checkpoint,instruction)
+            generate_multiple(model,checkpoint,instruction)
 
     # Get processed images to display
     processed_images = [f for f in os.listdir(app.config['PROCESSED_FOLDER']) if f.startswith('inference')]

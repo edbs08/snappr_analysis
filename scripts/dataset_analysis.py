@@ -2,6 +2,7 @@ import json
 from PIL import Image, ImageTk
 import tkinter as tk
 import os
+from call_llm import LLMConnection
 
 class ImageViewer:
     def __init__(self, jsonl_file,image_path):
@@ -79,13 +80,54 @@ class ImageViewer:
     def run(self):
         self.root.mainloop()
 
-if __name__ == "__main__":
-    #json file to use
-    # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_test.jsonl"  # Replace with your JSONL file path
-    # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_train.jsonl"  # Replace with your JSONL file path
-    jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_validate.jsonl"  # Replace with your JSONL file path
+def check_classes_in_dataset(json_file,image_path):
+    prompt = """
+    Help me clasify this image withing the following classes. 
+        pizza_like - shape of a pizza, bread based, can contain toppings. e.g. Pizza, Focaccia, Naan bread 
+        dessert_like - sweet pastry can contain glazed e.g. muffin, brownie, cake, pancake
+        sandwich_like - ingredients between one or two pieces of bread. e.g. sandwich, burger, tacos
+        beverage - liquid in a container for drinking e.g. soda, coffee, juice
+        soup_like - liquid, in a bowl. e.g. bean soup, tomato soup
+        pasta - pasta based dish. e. g. spaghetti, mac and cheese, noodle 
+        stuffed_dough - dough with some filling in the inside. e. g. empanada, dumplings, pasty, spring_rolls
+        main_course - a dish with different elements. e. g. stake with fries, chicken with salad and side of bread
+        salad - vegetables or fruit based dish. e. g. fruit salad, lettuce with veggies 
+        side_dish - small portion, single element, not many elements. e.g. fries, rice, 
+        condiment - portion of a single condiment. e. g. dressing, ketchup, mustard 
+        other_xxxx - write it followed by what you think is the correct class. e.g. other_sushi, other_fried_chicken 
 
+        if one element belongs to more than one class. pick the one more representative
+        reply only with the word. do not add any other information or description, reply only the word of the class you chose for the image.
+    """
+    image_list = []
+    with open(json_file, "r") as file:
+        for line in file:
+            data = json.loads(line)
+            image_list.append(data["input_image"])
+    classes_dict = {}
+
+    for img in image_list:
+        llm = LLMConnection()
+        res = llm.general_vlm_call(prompt,os.path.join(image_path,img))
+        #check for short responses
+        if len(res)>25:
+            break
+        if res in classes_dict:
+            classes_dict[res]+=1
+        else:
+            classes_dict[res]=1
+        print(classes_dict)
+
+if __name__ == "__main__":
     #image path 
     image_path = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\images\\media"
-    viewer = ImageViewer(jsonl_file,image_path)
-    viewer.run()
+    
+    #json file to use
+    # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_test.jsonl"  # Replace with your JSONL file path
+    jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_train.jsonl"  # Replace with your JSONL file path
+    # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_validate.jsonl"  # Replace with your JSONL file path
+    check_classes_in_dataset(jsonl_file,image_path)
+
+    ##### Dataset viewer
+    # viewer = ImageViewer(jsonl_file,image_path)
+    # viewer.run()

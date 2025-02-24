@@ -2,6 +2,9 @@ import os
 from PIL import Image
 
 def resize_images(input_folder,output_folder,new_size):
+    """
+        function to resize png images in a folder
+    """
     # Create the output folder if it doesn't exist
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
