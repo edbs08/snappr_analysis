@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os
 from PIL import Image
 from scripts.generate_images import *
@@ -23,47 +23,50 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+@app.route('/')
+def index():
+    """Render the main page."""
+    return render_template('index.html')
 
 # Define a route for the root URL ("/")
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        # Check if a file was uploaded
-        if 'file' not in request.files:
-            return redirect(request.url)
-        
-        file = request.files['file']
-        
-        # If no file is selected
-        if file.filename == '':
-            return redirect(request.url)
-        
-        # If the file is valid
-        if file and allowed_file(file.filename):
-            # clear previous pictures 
-            clear_all_in_folder()
-            file_extension=file.filename.split(".")[1]
-
-            # Save the uploaded file
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], "test_image."+file_extension)
-            file.save(filepath)            
-
-            # Get the text inputs from the form
-            model = request.form.get('model')
-            checkpoint = request.form.get('checkpoint')
-            instruction = request.form.get('instruction')
-            resolution = int(request.form.get('resolution'))
-
-            #modify the extension and resolution 
-            resize_and_save_image(filepath,(resolution,resolution))
-
-            print(model,checkpoint,instruction)
-            generate_multiple(model,checkpoint,instruction)
-
-    # Get processed images to display
-    processed_images = [f for f in os.listdir(app.config['PROCESSED_FOLDER']) if f.startswith('inference')]
+@app.route('/upload', methods=['POST'])
+def upload():
     
-    return render_template('index.html', processed_images=processed_images)
+    """Handle file upload and processing asynchronously."""
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+    
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+        
+    # If the file is valid
+    if file and allowed_file(file.filename):
+        # clear previous pictures 
+        clear_all_in_folder()
+        file_extension=file.filename.split(".")[1]
+
+        # Save the uploaded file
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], "test_image."+file_extension)
+        file.save(filepath)            
+
+        # Get the text inputs from the form
+        model = request.form.get('model')
+        checkpoint = request.form.get('checkpoint')
+        instruction = request.form.get('instruction')
+        resolution = int(request.form.get('resolution'))
+
+        #modify the extension and resolution 
+        resize_and_save_image(filepath,(resolution,resolution))
+
+        print(model,checkpoint,instruction)
+        generate_multiple(model,checkpoint,instruction)
+        processed_images = [f for f in os.listdir(app.config['PROCESSED_FOLDER']) if f.startswith('inference')]
+        print(processed_images)
+        return jsonify({'processed_images': processed_images})
+    return jsonify({'error': 'Invalid file type'}), 400
+
 
 # Run the application on port 5000
 if __name__ == '__main__':

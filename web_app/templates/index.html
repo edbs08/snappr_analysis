@@ -38,12 +38,16 @@
             padding: 8px;
             box-sizing: border-box;
         }
+        #status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Upload and Process Image</h1>
-        <form class="upload-form" method="POST" enctype="multipart/form-data">
+        <form class="upload-form" id="uploadForm">
             <div class="form-group">
                 <label for="model">Model</label>
                 <input type="text" id="model" name="model" placeholder="Enter model name" required>
@@ -61,22 +65,54 @@
                 <input type="text" id="resolution" name="resolution" placeholder="Enter model resolution as one number  e.g. 1024" required>
             </div>
             <div class="form-group">
-                <label for="file">Upload a png Image</label>
+                <label for="file">Upload Image</label>
                 <input type="file" id="file" name="file" accept=".png" required>
             </div>
             <button type="submit">Upload and Process</button>
         </form>
 
+        <div id="status"></div>
+
         <h2>Processed Images</h2>
-        <div class="image-grid">
-            {% if processed_images %}
-                {% for image in processed_images %}
-                    <img src="{{ url_for('static', filename=image) }}" alt="Processed Image">
-                {% endfor %}
-            {% else %}
-                <p>No processed images yet. Upload an image to see the results.</p>
-            {% endif %}
+        <div class="image-grid" id="imageGrid">
+            <p>No processed images yet. Upload an image to see the results.</p>
         </div>
     </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();  // Prevent the form from submitting normally
+
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = 'Processing... Please wait.';
+
+            const formData = new FormData(this);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    statusDiv.textContent = 'Error: ' + data.error;
+                } else {
+                    statusDiv.textContent = 'Processing complete!';
+                    const imageGrid = document.getElementById('imageGrid');
+                    imageGrid.innerHTML = '';  // Clear previous images
+
+                    data.processed_images.forEach(image => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = `/static/${image}`;
+                        imgElement.alt = 'Processed Image';
+                        imageGrid.appendChild(imgElement);
+                    });
+                }
+            })
+            .catch(error => {
+                statusDiv.textContent = 'An error occurred: ' + error.message;
+            });
+        });
+    </script>
 </body>
 </html>
