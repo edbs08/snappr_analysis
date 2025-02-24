@@ -126,8 +126,8 @@ if __name__ == "__main__":
     # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_test.jsonl"  # Replace with your JSONL file path
     jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_train.jsonl"  # Replace with your JSONL file path
     # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_validate.jsonl"  # Replace with your JSONL file path
-    check_classes_in_dataset(jsonl_file,image_path)
+    # check_classes_in_dataset(jsonl_file,image_path)
 
     ##### Dataset viewer
-    # viewer = ImageViewer(jsonl_file,image_path)
-    # viewer.run()
+    viewer = ImageViewer(jsonl_file,image_path)
+    viewer.run()

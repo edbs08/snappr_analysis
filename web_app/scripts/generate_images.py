@@ -66,4 +66,4 @@ def generate_multiple(model, checkpoint,instruction,it_number=3):
             img_guidance_scale=1.6,
             seed=i
         )
-        images[0].save(os.path.join(save_path,f"inference-{i}"))  # save output PIL image
+        images[0].save(os.path.join(save_path,f"inference-{i}.png"))  # save output PIL image
