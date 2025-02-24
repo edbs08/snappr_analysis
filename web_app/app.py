@@ -26,7 +26,9 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     """Render the main page."""
-    return render_template('index.html')
+    # Get processed images to display
+    processed_images = [f for f in os.listdir(app.config['PROCESSED_FOLDER']) if f.startswith('inference')]
+    return render_template('index.html', processed_images=processed_images)
 
 # Define a route for the root URL ("/")
 @app.route('/upload', methods=['POST'])

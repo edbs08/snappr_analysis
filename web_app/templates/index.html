@@ -75,7 +75,13 @@
 
         <h2>Processed Images</h2>
         <div class="image-grid" id="imageGrid">
-            <p>No processed images yet. Upload an image to see the results.</p>
+            {% if processed_images %}
+                {% for image in processed_images %}
+                    <img src="{{ url_for('static', filename= image) }}" alt="Processed Image">
+                {% endfor %}
+            {% else %}
+                <p>No processed images yet. Upload an image to see the results.</p>
+            {% endif %}
         </div>
     </div>
 
