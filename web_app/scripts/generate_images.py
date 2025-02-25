@@ -41,7 +41,7 @@ def resize_and_save_image(image_path, resolution=(1024, 1024)):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def generate_multiple(model, checkpoint,instruction,it_number=3):
+def generate_multiple(model, checkpoint,instruction,resolution,it_number=3):
 
     image_path = "static"
 
@@ -53,17 +53,21 @@ def generate_multiple(model, checkpoint,instruction,it_number=3):
     save_path =  image_path
 
     pipe = OmniGenPipeline.from_pretrained("Shitao/OmniGen-v1")  
-    pipe.merge_lora(os.path.join("/home/ec2-user/snappr/snappr_analysis/results",model,"checkpoints",checkpoint))  
+    if model == "default":
+        print("using original OmniGen-v1 model")
+    else:
+        print(f"Adding model {model} to pipeline")
+        pipe.merge_lora(os.path.join("/home/ec2-user/snappr/snappr_analysis/results",model,"checkpoints",checkpoint))  
 
     for i in range(it_number):
         ## Multi-modal to Image
         images = pipe(
             prompt=f"<img><|image_1|></img> {instruction}",
             input_images=[os.path.join(image_path,ref_image_name)],
-            height=1024, 
-            width=1024,
+            height=resolution, 
+            width=resolution,
             guidance_scale=2.5, 
-            img_guidance_scale=1.6,
+            img_guidance_scale=3,
             seed=i
         )
         images[0].save(os.path.join(save_path,f"inference-{i}.png"))  # save output PIL image

@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os
 from PIL import Image
 from scripts.generate_images import *
+from scripts.evaluate_images import get_dir_similarity
 
 # Create a Flask application
 app = Flask(__name__)
@@ -63,9 +64,12 @@ def upload():
         resize_and_save_image(filepath,(resolution,resolution))
 
         print(model,checkpoint,instruction)
-        generate_multiple(model,checkpoint,instruction)
+        generate_multiple(model,checkpoint,instruction,resolution)
         processed_images = [f for f in os.listdir(app.config['PROCESSED_FOLDER']) if f.startswith('inference')]
         print(processed_images)
+
+        # perform evaluations
+        get_dir_similarity()
         return jsonify({'processed_images': processed_images})
     return jsonify({'error': 'Invalid file type'}), 400
 

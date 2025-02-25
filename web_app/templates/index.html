@@ -109,7 +109,7 @@
 
                     data.processed_images.forEach(image => {
                         const imgElement = document.createElement('img');
-                        imgElement.src = `/static/${image}`;
+                        imgElement.src = `/static/${image}?${new Date().getTime()}`;
                         imgElement.alt = 'Processed Image';
                         imageGrid.appendChild(imgElement);
                     });

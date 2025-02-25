@@ -120,12 +120,12 @@ def check_classes_in_dataset(json_file,image_path):
 
 if __name__ == "__main__":
     #image path 
-    image_path = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\images\\media"
+    image_path = "C:\\Users\\edaeurb\\Documents\\snappr\\snappr_analysis\\data\\images\\media"
     
     #json file to use
-    # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_test.jsonl"  # Replace with your JSONL file path
-    jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_train.jsonl"  # Replace with your JSONL file path
-    # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\ai_utils\\data\\dataset_validate.jsonl"  # Replace with your JSONL file path
+    jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\snappr_analysis\\data\\dataset_test.jsonl"  # Replace with your JSONL file path
+    # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\snappr_analysis\\data\\dataset_train.jsonl"  # Replace with your JSONL file path
+    # jsonl_file = "C:\\Users\\edaeurb\\Documents\\snappr\\snappr_analysis\\data\\dataset_validate.jsonl"  # Replace with your JSONL file path
     # check_classes_in_dataset(jsonl_file,image_path)
 
     ##### Dataset viewer
